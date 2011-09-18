@@ -6,6 +6,9 @@
 #ifndef ZEO_PACKET_INCLUDED
 #define ZEO_PACKET_INCLUDED
 
+#include <stdint.h>
+#include <stdlib.h>
+
 #define ZEO_PACKET_TYPES(apply) \
     apply(0x00, zeo_event,          "Event",                "An event has occured.") \
     apply(0x02, zeo_slice_end,      "Slice End",            "Marks the end of a slice of data.") \
@@ -18,34 +21,13 @@
 	apply(0x9C, zeo_bad_signal,     "Bad Signal",           "Signal contains artifacts") \
 	apply(0x9D, zeo_sleep_stage,    "Sleep Stage",          "Current 30sec sleep stage")
 
-#define ZEO_EVENT_TYPES(apply) \
-    apply(0x05, zeo_night_start,     "Night Start",          "User’s night has begun.") \
-    apply(0x07, zeo_sleep_onset,     "Sleep Onset",          "User is asleep.") \
-    apply(0x0E, zeo_headband_dock,   "Headband Docked",      "Headband returned to dock.") \
-	apply(0x0F, zeo_headband_undock, "Headband Undocked",    "Headband removed from dock.") \
-	apply(0x10, zeo_alarm_off,       "Alarm Off",            "User turned off the alarm.") \
-	apply(0x11, zeo_alarm_snooze,    "Alarm Snooze",         "User hit snooze.") \
-	apply(0x13, zeo_alarm_play,      "Alarm Play",           "Alarm is firing.") \
-	apply(0x15, zeo_night_end,       "Night End",            "User’s night has ended.") \
-	apply(0x24, zeo_new_headband,    "New Headband",         "A new headband ID has been read.")
-
 /* Packet enumeration utilities. */
-#define X(ID, VAR, NAME, DESC) VAR = ID,
-enum zeo_packet_type { ZEO_PACKET_TYPES(X) };
-#undef X
+#define ZEO_ENUM_VAR_ID(ID, VAR, NAME, DESC) VAR = ID,
+enum zeo_packet_type { ZEO_PACKET_TYPES(ZEO_ENUM_VAR_ID) };
+#undef ZEO_ENUM_VAR_ID
 
 char *zeo_packet_type_to_string(int packet_id, size_t *len);
 char *zeo_packet_type_to_desc  (int packet_id, size_t *len);
-
-/* Event enumeration utilities. */
-#define X(ID, VAR, NAME, DESC) VAR = ID,
-enum zeo_event_type { ZEO_EVENT_TYPES(X) };
-#undef X
-
-char *zeo_event_type_to_string(int packet_id, size_t *len);
-char *zeo_event_type_to_desc  (int packet_id, size_t *len);
-
-#include <stdint.h>
 
 #pragma pack(push,1)
 typedef struct S_ZEO_HEADER
@@ -56,7 +38,7 @@ typedef struct S_ZEO_HEADER
 	uint8_t  checksum;
 	uint16_t message_length; /* Includes this header info. */
 	uint16_t message_length_inverse; /* Used as a redundancy check */
-	uint8_t  _padding_1;
+	uint8_t  _padding_1; /* strange... I seem to get better results with this here. */
 	uint8_t  unix_time; /* The lower 8 bits of Zeo's Unix time. */
 	uint16_t subsecond; /* Runs from 0x0000 through 0xFFFF in 1 second. */
 	uint8_t  sequence_number;
@@ -71,13 +53,50 @@ typedef struct S_ZEO_PACKET
 	zeo_header header;
 	
 	/***********************************************************************
-	* The data itself.  The length is message_length - sizeof(header)
+	* The data itself.  The length is message_length - 1.
 	* This is dynamically allocated.
 	* The caller is responsible for free'ing it.
 	***********************************************************************/
-	void *data;
+	char *data;
 	
 } zeo_packet;
+
+/*******************************************************************************
+* Data block types.
+*******************************************************************************/
+/* These might be pointless, depending on how the splice/event loading code works. */
+#if 0
+typedef struct S_ZEO_EVENT
+{
+	int32_t type;
+} zeo_event;
+
+typedef struct S_ZEO_SPLICE_END
+{
+	/* The number of packets in the splice. */
+	int32_t n_packets;
+} zeo_splice_end;
+
+typedef struct S_ZEO_PROTOCOL
+{
+	int32_t protocol_version;
+} zeo_protocol;
+
+typedef struct S_ZEO_WAVEFORM
+{
+	int16_t samples[128];
+} zeo_waveform;
+
+typedef struct S_ZEO_FREQUENCY_BINS
+{
+	int16_t bins[7];
+} zeo_frequency_bins;
+
+typedef struct S_ZEO_SQI
+{
+	int32_t sqi;
+} zeo_sqi;
+#endif
 
 
 /*******************************************************************************

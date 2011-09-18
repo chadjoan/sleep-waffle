@@ -9,6 +9,7 @@
 #include <string.h>
 #include <stddef.h>
 
+#include <zeo_malloc.h>
 #include <zeo_packet.h>
 #include <zeo_packet_loader.h>
 
@@ -55,13 +56,16 @@ static void parse_header( zeo_packet_loader *loader )
 	{
 		swap_endian(&header_ptr->message_length);
 		swap_endian(&header_ptr->message_length_inverse);
-		//swap_endian(&header_ptr->subsecond);
+		swap_endian(&header_ptr->subsecond);
 	}
 	
 	/* Valid Zeo packets start with 'A'. */
 	if ( header_ptr->start_char != 'A' )
 	{
-		loader->err_str = "Not a Zeo packet: does not start with 'A' character.";
+		snprintf(loader->err_buf, ERR_BUF_MAX,
+			"Not a Zeo packet: starts with '%c' instead of the 'A' character.",
+			header_ptr->start_char);
+		loader->err_str = loader->err_buf;
 		loader->err_len = strlen(loader->err_str);
 		return;
 	}
@@ -78,7 +82,10 @@ static void parse_header( zeo_packet_loader *loader )
 	/* For some reason Zeo packets have a max length. */
 	if ( header_ptr->message_length > 257 )
 	{
-		loader->err_str = "Packet too big: data block is large than 256 bytes.";
+		snprintf(loader->err_buf, ERR_BUF_MAX,
+			"Packet too big: %d byte data block is larger than 256 bytes.",
+			header_ptr->message_length - 1);
+		loader->err_str = loader->err_buf;
 		loader->err_len = strlen(loader->err_str);
 		return;
 	}
@@ -91,6 +98,11 @@ static void parse_header( zeo_packet_loader *loader )
 	/* Since both the message_length and the header account for the */
 	/*   identifier, we have to subtract 1 to dedup its contribution. */
 	loader->packet_len = header_ptr->message_length + sizeof(zeo_header) - 1;
+}
+
+static void parse_data_block( zeo_packet_loader *loader )
+{
+	
 }
 
 int accumulate_zeo_packet( zeo_packet_loader *loader, void *buffer, size_t n_bytes )
@@ -173,9 +185,9 @@ int accumulate_zeo_packet( zeo_packet_loader *loader, void *buffer, size_t n_byt
 		
 		void *new_data = NULL;
 		if ( loader->packet->data == NULL )
-			new_data = malloc(new_len);
+			new_data = zeo_malloc(new_len);
 		else
-			new_data = realloc(loader->packet->data, new_len);
+			new_data = zeo_realloc(loader->packet->data, new_len);
 
 	printf("%d\n",__LINE__);
 		if ( new_data == NULL )

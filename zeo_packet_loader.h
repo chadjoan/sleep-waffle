@@ -3,12 +3,15 @@
 /*    (See accompanying file LICENSE_1_0.txt or copy at       */
 /*          http://www.boost.org/LICENSE_1_0.txt)             */
 
-#ifndef ZEO_PACKET_HEADER_INCLUDED
-#define ZEO_PACKET_HEADER_INCLUDED
+#ifndef ZEO_PACKET_LOADER_INCLUDED
+#define ZEO_PACKET_LOADER_INCLUDED
 
 #include <stdint.h>
 
 #include <zeo_packet.h>
+
+/* Max size for the zeo_packet_loader.err_buf variable.  Internal use only. */
+#define ERR_BUF_MAX 256
 
 typedef struct S_ZEO_PACKET_LOADER
 {
@@ -30,11 +33,18 @@ typedef struct S_ZEO_PACKET_LOADER
 	/***********************************************************************
 	* String of the last error, if any. NULL if there
 	*   have been no unhandled errors.
+	* If present, this will point to either pre-allocated memory or
+	*   a string literal.  The caller does not need to worry about managing
+	*   this memory.  The caller should also never modify this string.
 	***********************************************************************/
 	char *err_str;
 
 	/* The length of err_str. */
 	size_t err_len;
+	
+	/* Pre-allocated space for err_str.  Only used when needed.  This is
+	 *   for internal use.  Use err_str instead. */
+	char err_buf[ERR_BUF_MAX];
 	
 } zeo_packet_loader;
 

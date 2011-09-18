@@ -10,72 +10,21 @@
 #include <stddef.h>
 
 #include <zeo_packet.h>
-
-/* All of the enum printing functions follow this pattern: */
-#define STRINGIZER_START(FUNC_NAME) \
-char *FUNC_NAME(int packet_id, size_t *len) \
-{ \
-	char *result; \
-	size_t dummy_len; \
-	if ( len == NULL ) \
-		len = &dummy_len; \
-	\
-	switch(packet_id) \
-	{
-		/* ZEO_PACKET_TYPES(GENERATE_ZEO_ENUM_CASE) */
-#define STRINGIZER_END(ERR_MSG) \
-	} \
-	 \
-	result = ERR_MSG; \
-	*len = strlen(result); \
-	return result; \
-}
-
+#include <zeo_enum.h>
 		
 #define GENERATE_ZEO_ENUM_CASE(ID, VAR, NAME, DESC) \
-	case VAR: { \
-		result = NAME; \
-		*len = strlen(result); \
-		return result; \
-	}
-STRINGIZER_START(zeo_packet_type_to_string)
+	ZEO_ENUM_STRINGIZER_CASE(VAR,NAME)
+ZEO_ENUM_STRINGIZER_START(zeo_packet_type_to_string)
 	ZEO_PACKET_TYPES(GENERATE_ZEO_ENUM_CASE)
-STRINGIZER_END("Can not look up packet type name: invalid packet type.")
+ZEO_ENUM_STRINGIZER_END("Can not look up packet type name: invalid packet type.")
 #undef GENERATE_ZEO_ENUM_CASE
 
 
 #define GENERATE_ZEO_ENUM_CASE(ID, VAR, NAME, DESC) \
-	case VAR: { \
-		result = DESC; \
-		*len = strlen(result); \
-		return result; \
-	}
-STRINGIZER_START(zeo_packet_type_to_desc)
+	ZEO_ENUM_STRINGIZER_CASE(VAR,DESC)
+ZEO_ENUM_STRINGIZER_START(zeo_packet_type_to_desc)
 	ZEO_PACKET_TYPES(GENERATE_ZEO_ENUM_CASE)
-STRINGIZER_END("Can not look up packet type description: invalid packet type.")
-#undef GENERATE_ZEO_ENUM_CASE
-	
-#define GENERATE_ZEO_ENUM_CASE(ID, VAR, NAME, DESC) \
-	case VAR: { \
-		result = NAME; \
-		*len = strlen(result); \
-		return result; \
-	}
-STRINGIZER_START(zeo_event_type_to_string)
-	ZEO_EVENT_TYPES(GENERATE_ZEO_ENUM_CASE)
-STRINGIZER_END("Can not look up event type name: invalid event type.")
-#undef GENERATE_ZEO_ENUM_CASE
-
-
-#define GENERATE_ZEO_ENUM_CASE(ID, VAR, NAME, DESC) \
-	case VAR: { \
-		result = DESC; \
-		*len = strlen(result); \
-		return result; \
-	}
-STRINGIZER_START(zeo_event_type_to_desc)
-	ZEO_EVENT_TYPES(GENERATE_ZEO_ENUM_CASE)
-STRINGIZER_END("Can not look up event type description: invalid event type.")
+ZEO_ENUM_STRINGIZER_END("Can not look up packet type description: invalid packet type.")
 #undef GENERATE_ZEO_ENUM_CASE
 
 void init_zeo_packet( zeo_packet *packet )
