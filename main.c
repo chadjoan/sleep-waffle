@@ -15,6 +15,7 @@
 
 #include <string.h>
 #include <zeo_packet.h>
+#include <zeo_packet_loader.h>
 
 #define BAUDRATE B38400
 /* #define BAUDRATE 38400 */
@@ -63,9 +64,11 @@ int main(int argc, char *argv[])
 	tcgetattr(fd,&oldtio); /* save current port settings */
 	/* set new port settings for canonical input processing */
 	/*newtio.c_cflag = BAUDRATE | CRTSCTS | CS8 | CLOCAL | CREAD;*/
-	newtio.c_cflag = BAUDRATE | CRTSCTS | CS8 | CLOCAL | CREAD;
+	/*newtio.c_cflag = BAUDRATE | CRTSCTS | CS8 | CLOCAL | CREAD;*/
+	newtio.c_cflag = BAUDRATE | CS8 | CREAD;
 	/*newtio.c_iflag = IGNPAR | ICRNL | ICANON;*/
-	newtio.c_iflag = IGNPAR;
+	/*newtio.c_iflag = IGNPAR;*/
+	newtio.c_oflag = 0;
 	newtio.c_oflag = 0;
 	/*newtio.c_lflag = ICANON; */
 	newtio.c_cc[VMIN]=1;
