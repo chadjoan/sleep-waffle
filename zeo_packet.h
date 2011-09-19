@@ -38,7 +38,7 @@ typedef struct S_ZEO_HEADER
 	uint8_t  checksum;
 	uint16_t message_length; /* Includes this header info. */
 	uint16_t message_length_inverse; /* Used as a redundancy check */
-	uint8_t  _padding_1; /* strange... I seem to get better results with this here. */
+	//uint8_t  _padding_1; /* strange... I seem to get better results with this here. */
 	uint8_t  unix_time; /* The lower 8 bits of Zeo's Unix time. */
 	uint16_t subsecond; /* Runs from 0x0000 through 0xFFFF in 1 second. */
 	uint8_t  sequence_number;

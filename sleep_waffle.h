@@ -81,9 +81,18 @@ uint32_t sw_list_serial_ports( sw_serial_port *ports[] );
 void sw_free_port( sw_serial_port *port );
 void sw_free_ports( sw_serial_port ports[], size_t ports_len );
 
+/* TODO: where does this go? */
+typedef struct S_ZEO_PACKET_CURSOR
+{
+	uint64_t packet_number;
+	uint32_t last_timestamp;
+	
+} zeo_packet_cursor;
+
 typedef struct S_ZEO_CONNETION
 {
 	sw_serial_port *port;
+	zeo_packet_cursor *cursor;
 	
 	
 } zeo_connection;
