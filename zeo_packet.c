@@ -34,8 +34,50 @@ void init_zeo_packet( zeo_packet *packet )
 	packet->data = NULL;
 }
 
-int zeo_packet_to_string( zeo_packet *packet, char *buf, int len )
+static char nybble_to_hex( char c )
 {
+	if ( c < 10 )
+		return c + '0';
+	else
+		return (c - 10) + 'A';
+}
+
+char *bytes_to_hex( const char *bytes, size_t n_bytes, char *out_str, size_t len )
+{
+	if ( len == 0 )
+		return NULL;
+	
+	if ( len < 3 || n_bytes < 1 )
+	{
+		out_str[0] = '\0';
+		return out_str;
+	}
+	
+	char c;
+	size_t i;
+	size_t j = 0;
+	for ( i = 0; i < n_bytes; i++ )
+	{
+		if ( !(j < len - 3) )
+			break;
+		
+		out_str[j+0] = nybble_to_hex((bytes[i] >> 4) & 0x0F);
+		out_str[j+1] = nybble_to_hex((bytes[i] >> 0) & 0x0F);
+		out_str[j+2] = ' ';
+		j += 3;
+	}
+	
+	/* Always end on a null terminator by replacing the last space with a 
+	 *   null byte. */
+	out_str[j-1] = '\0';
+	
+	return out_str;
+}
+
+int zeo_packet_to_string( zeo_packet *packet, char *buf, size_t len )
+{
+	char hex_buf[1024];
+	
 	return snprintf(
 		buf,
 		len,
@@ -61,5 +103,6 @@ int zeo_packet_to_string( zeo_packet *packet, char *buf, int len )
 		offsetof(zeo_header, sequence_number),        packet->header.sequence_number,
 		offsetof(zeo_header, data_type),              packet->header.data_type,
 			zeo_packet_type_to_string(packet->header.data_type, NULL),
-		offsetof(zeo_packet, data),                   (char*)packet->data);
+		offsetof(zeo_packet, data),
+			bytes_to_hex((char*)packet->data, packet->header.message_length-1, hex_buf, 1024));
 }

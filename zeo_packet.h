@@ -105,8 +105,13 @@ typedef struct S_ZEO_SQI
 void init_zeo_packet( zeo_packet *packet );
 
 /*******************************************************************************
+* Convenience function for dumping data present in packets.
+*******************************************************************************/
+char *bytes_to_hex( const char *bytes, size_t n_bytes, char *out_str, size_t len );
+
+/*******************************************************************************
 * Creates a string representation of the given Zeo packet.
 *******************************************************************************/
-int zeo_packet_to_string( zeo_packet *packet, char *buf, int len );
+int zeo_packet_to_string( zeo_packet *packet, char *buf, size_t len );
 
 #endif
