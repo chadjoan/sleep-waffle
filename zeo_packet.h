@@ -10,7 +10,7 @@
 #include <stdlib.h>
 
 #define ZEO_PACKET_TYPES(apply) \
-    apply(0x00, zeo_event,          "Event",                "An event has occured.") \
+    apply(0x00, zeo_event_packet,   "Event",                "An event has occured.") \
     apply(0x02, zeo_slice_end,      "Slice End",            "Marks the end of a slice of data.") \
     apply(0x03, zeo_version,        "Version",              "Version of the raw data output") \
 	apply(0x80, zeo_waveform,       "Waveform",             "Raw time domain brainwave") \

@@ -7,6 +7,7 @@
 #include <zeo_splice.h>
 #include <zeo_splice_loader.h>
 #include <zeo_event.h>
+#include <zeo_connection.h>
 
 /*******************************************************************************
  * General configuration stuff.
@@ -15,5 +16,5 @@ uint32_t zeo_language_compat = zeo_lang_c;
 
 uint32_t zeo_poll( zeo_connection *conn, zeo_message *message )
 {
-	
+	return 0;
 }
