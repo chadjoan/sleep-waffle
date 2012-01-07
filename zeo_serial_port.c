@@ -1,10 +1,10 @@
 
 #include <zeo_malloc.h>
-#include <sw_serial_port.h>
+#include <zeo_serial_port.h>
 
 #if 0
 	/* Whether or not this port is known to have a zeo connection. */
-	/* This is only set if sw_check_port_zeo_connectivity(port) is called */
+	/* This is only set if zeo_check_port_zeo_connectivity(port) is called */
 	/*   on the enclosing port AND there is a zeo device on the other end */
 	/*   that is willing to talk. */
 	uint32_t is_zeo_port;
@@ -38,7 +38,7 @@
 #define INITIAL_N_CONN_IDS 1
 #define INITIAL_QUEUE_CAPACITY 16
 	
-static void init_serial_port(sw_serial_port *port)
+static void init_serial_port(zeo_serial_port *port)
 {
 	size_t i;
 	port->is_zeo_port = 0;
@@ -62,7 +62,7 @@ static void init_serial_port(sw_serial_port *port)
 }
 
 
-uint32_t sw_list_serial_ports( sw_serial_port *ports[] )
+uint32_t z_list_serial_ports( zeo_serial_port *ports[] )
 {
 	/* This is where we create serial ports. */
 	/* Thus, they should be initialized here. */

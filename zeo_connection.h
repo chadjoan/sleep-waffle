@@ -3,20 +3,20 @@
 #ifndef ZEO_CONNETION_INCLUDED
 #define ZEO_CONNETION_INCLUDED
 
-#include <sw_serial_port.h>
+#include <zeo_serial_port.h>
 #include <zeo_event.h>
 #include <zeo_splice.h>
 
 
 typedef struct S_ZEO_CONNETION
 {
-	sw_serial_port *port;
-	sw_serial_conn_id conn_id;
+	zeo_serial_port *port;
+	zeo_serial_conn_id conn_id;
 	
 	
 } zeo_connection;
 
-void connect_zeo_port( sw_serial_port *port, zeo_connection *connection );
+void connect_zeo_port( zeo_serial_port *port, zeo_connection *connection );
 
 
 /*******************************************************************************

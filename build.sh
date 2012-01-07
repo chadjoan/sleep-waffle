@@ -6,6 +6,6 @@ gcc -I. \
 	zeo_packet_loader.c \
 	zeo_splice.c \
 	zeo_splice_loader.c \
-	sw_serial_port.c \
+	zeo_serial_port.c \
 	sleep_waffle.c \
 	main.c -g -o main
